@@ -3,7 +3,7 @@ SYMAX Receiver
 
 Thanks to
 
- * Alexandre Clienti for the original code (https://github.com/execuc/v202-receiver)
+ * execuc for the original code (https://github.com/execuc/v202-receiver)
  * Deviationtx team for hacking the symax protocol (https://bitbucket.org/deviationtx/deviation/src/1194044d116b9611a015837226729e26de7e8365/src/protocol/symax_nrf24l01.c)
  * Special thanks to hexfet from deviationtx forum for the invaluable support
  
