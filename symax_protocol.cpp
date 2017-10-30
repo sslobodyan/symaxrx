@@ -77,7 +77,8 @@ uint8_t symaxProtocol::run( rx_values_t *rx_value )
                     if( checksum(mFrame) == mFrame[PSIZE-1] )
                     {
                         // a valid frame has been received
-                        incrementChannel = true;
+                        incrementChannel = true; //SSS MayBe this not need?
+						
 
                         // Discard bind frame
                         if( mFrame[5] != 0xAA && mFrame[6] != 0xAA )
