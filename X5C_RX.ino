@@ -3,8 +3,12 @@
  */
 
 #include <SPI.h>
-#include <symax_protocol.h>
+#include "symax_protocol.h"
 #include <Servo.h>
+
+#define LED_PIN 2
+#define LED_ON digitalWrite(LED_PIN, HIGH)
+#define LED_OFF digitalWrite(LED_PIN, LOW)
 
 Servo myservo_gaz, myservo_rul;  // create servo object to control a servo
 
@@ -14,6 +18,9 @@ symaxProtocol protocol;
 unsigned long time = 0;
 
 void setup() {
+
+	pinMode(LED_PIN, OUTPUT);
+	LED_ON;
 
   Serial.begin(115200);
 
@@ -30,9 +37,11 @@ void setup() {
   wireless.setPwr(PWRLOW);
   
   protocol.init(&wireless);
-  
+
   time = micros();
   Serial.println("Start");
+  
+  LED_OFF;
   
 }
 
@@ -40,8 +49,11 @@ rx_values_t rxValues;
 
 unsigned long newTime;
 
+bool led;
+
 void loop() 
-{
+{	
+
   time = micros();
   uint8_t value = protocol.run(&rxValues); 
   newTime = micros();
@@ -50,13 +62,16 @@ void loop()
   {
     case  NOT_BOUND:
         Serial.println("Not bound");
-    break;
+		    led = (millis() % 1000 > 500) ? HIGH : LOW;
+        break;
 
     case  BIND_IN_PROGRESS:
-        Serial.println("Bind in progress");
-    break;
+      led = (millis() % 400 > 200) ? HIGH : LOW;
+      Serial.println("Bind in progress");
+      break;
     
     case BOUND_NEW_VALUES:
+		  led = HIGH;
       Serial.print(newTime - time);
       Serial.print(" :\t");Serial.print(rxValues.throttle);
       Serial.print("\t"); Serial.print(rxValues.yaw);
@@ -72,17 +87,19 @@ void loop()
       //time = newTime;
 
       myservo_rul.write(map(rxValues.roll, -127, 127, 0, 180));              // tell servo to go to position
-	  myservo_gaz.write(map(rxValues.pitch, -127, 127, 0, 180));              // tell servo to go to position
+	    myservo_gaz.write(map(rxValues.pitch, -127, 127, 0, 180));              // tell servo to go to position
       
-    break;
+      break;
 
     case BOUND_NO_VALUES:
       //Serial.print(newTime - time); Serial.println(" : ----");
-    break;
+      led = LOW;
+      break;
 
     default:
-    break;
+      break;
 
   }
+	if (led) LED_ON; else LED_OFF;
 
 }
